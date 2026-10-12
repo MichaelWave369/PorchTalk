@@ -146,7 +146,7 @@ def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     return value
 
 
-def _read_document(path: Path) -> tuple[dict[str, Any], dict[str, Any], bytes, bytes]:
+def _read_document(path: Path) -> tuple[dict[str, Any], dict[str, Any], bytes, bytes, bytes]:
     if path.is_symlink() or not path.is_file():
         raise IdentityDenied("vault not a regular file")
     info = path.stat()
@@ -167,6 +167,8 @@ def _read_document(path: Path) -> tuple[dict[str, Any], dict[str, Any], bytes, b
         raise IdentityDenied("oversized vault")
     try:
         document = json.loads(data.decode("ascii"), object_pairs_hook=_unique_object)
+    except IdentityDenied:
+        raise
     except (UnicodeError, ValueError) as exc:
         raise IdentityDenied("invalid vault JSON") from exc
     if type(document) is not dict or set(document) != {"metadata", "ciphertext_b64"}:
