@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "porchtalk"
-version = "0.4.0"
+version = "0.5.0"
 description = "Offline, consent-first research router for the Infinite Porch compute commons"
 requires-python = ">=3.10"
 dependencies = ["cryptography>=43,<49"]
