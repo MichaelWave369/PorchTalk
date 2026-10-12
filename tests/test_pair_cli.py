@@ -224,6 +224,21 @@ class PairingCeremonyTests(unittest.TestCase):
             self.assertEqual(main(["list", "--trust-db", str(self.db_path)]), 0)
         self.assertIn(self.bob.fingerprint, output.getvalue())
 
+    def test_corrupted_local_database_is_denied_cleanly(self):
+        self.db_path.write_bytes(b"not a sqlite database")
+        stdout = StringIO()
+        stderr = StringIO()
+        with redirect_stdout(stdout), redirect_stderr(stderr):
+            code = main(["list", "--trust-db", str(self.db_path)])
+        self.assertEqual(code, 2)
+        self.assertIn("DENIED", stderr.getvalue())
+
+    def test_trust_inspection_creates_no_network_session(self):
+        self.approve()
+        with patch("socket.create_connection", side_effect=AssertionError("No network allowed")):
+            result = inspect_trust(trust_db_path=self.db_path)
+        self.assertEqual(result["status"], "LOCAL_TRUST_INSPECTION_ONLY")
+
     def test_missing_directory_fails_closed(self):
         missing = self.root / "not-created" / "peers.sqlite3"
         with self.assertRaisesRegex(IdentityDenied, "does not exist"):
