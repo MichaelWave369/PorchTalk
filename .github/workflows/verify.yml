@@ -19,5 +19,7 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Compile Python sources
         run: python -m compileall -q porchtalk
+      - name: Gate B3 loopback-only TLS smoke test
+        run: python scripts/demo_loopback_first_knock.py
       - name: Test offline sample
         run: python -m porchtalk.cli examples/two_porches.json --at 2026-10-12T18:00:00Z
