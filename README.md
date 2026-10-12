@@ -4,7 +4,7 @@
 
 PorchTalk is the proposed consent-first, budget-aware inference routing policy layer for the **Infinite Porch / Infinite Commons** ecosystem. It is independently implemented research code, intended to complement **PhiOS**, **PhiPie**, **Super Φ.Vessel / Crane Fly**, **BudgetGenius**, and **PhiStream**, not duplicate their runtimes.
 
-**Current status: v0.1.0 offline policy prototype.** It evaluates JSON metadata and emits deterministic decisions and SHA-256 checksum receipts. **It does not discover devices, send packets, execute models, move weights, authenticate identities, or permit actual resource sharing.**
+**Current status: v0.5.0 research prototype.** It evaluates offline routing, tests signed consent claims, device fingerprints and loopback TLS 1.3, and can save experimental passphrase-encrypted device identities. **It does not discover LAN devices, connect two physical PCs, execute models, move weights, or permit actual resource sharing.**
 
 ## The first six rules
 
@@ -17,7 +17,7 @@ PorchTalk is the proposed consent-first, budget-aware inference routing policy l
 
 ## Test-drive the neighborhood
 
-Python 3.10+; no runtime dependencies:
+Python 3.10+; install the cryptography dependency for identity/TLS/vault experiments with `python -m pip install -e .`. The offline routing command itself uses the Python standard library:
 
 ```bash
 python -m unittest discover -s tests -v
@@ -58,6 +58,14 @@ We now have **portable signed PUBLIC-key enrollment cards** with independent ful
 This does **not** open LAN sockets, enroll real PCs automatically, store persistent private signing keys, run models or grant resources. Public cards contain **no private-key material**; the included demo is synthetic and its implicit fixture approval must never be used on real devices.
 
 Run `python scripts/demo_two_pc_readiness.py` for the entirely offline example.
+
+## Gate B4b: restart-stable encrypted device identity
+
+PorchTalk now includes an **optional experimental passphrase-encrypted Ed25519 identity vault**. Local keys can survive program restarts without being stored as plaintext private-key files. The interactive `vault_cli` can create a vault, unlock it, export a signed **public-only** identity card, and inspect a received public card without silently trusting it.
+
+The file uses scrypt + AES-256-GCM with authenticated metadata, refuses overwrite and rejects altered data. **This is not OS-backed Windows DPAPI/TPM protection or production key custody**; no real-device LAN bind or compute grant is enabled. In particular, the B3 loopback harness's temporary PEM-key approach is still unsuitable for persistent real-world keys.
+
+Read [encrypted device vault limitations and CLI](docs/ENCRYPTED_IDENTITY_VAULT.md) before using any identity on a real PC. Try the safe synthetic restart demo with `python scripts/demo_encrypted_identity.py`.
 
 ## First real-world milestone (NOT implemented)
 
