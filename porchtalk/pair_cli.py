@@ -13,6 +13,7 @@ import json
 import os
 from pathlib import Path
 import re
+import sqlite3
 import stat
 import sys
 from typing import Any
@@ -233,7 +234,7 @@ def main(argv: list[str] | None = None) -> int:
             result = inspect_trust(trust_db_path=args.trust_db)
         print(json.dumps(result, sort_keys=True, indent=2))
         return 0
-    except (IdentityDenied, OSError, ValueError) as exc:
+    except (IdentityDenied, OSError, ValueError, sqlite3.DatabaseError) as exc:
         # Don't show source paths or object repr from invalid untrusted files.
         reason = str(exc) if isinstance(exc, IdentityDenied) else "pairing IO or validation failure"
         print(f"DENIED: {reason}", file=sys.stderr)
