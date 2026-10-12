@@ -1,0 +1,53 @@
+{
+  "request": {
+    "request_id": "synthetic-demo-001",
+    "requester_id": "porch-alice",
+    "data_class": "SYNTHETIC",
+    "min_quality_tier": 2,
+    "max_cost_units": 10,
+    "max_latency_ms": 5000,
+    "max_energy_mwh": 2000,
+    "allow_remote": true
+  },
+  "offers": [
+    {
+      "node_id": "alice-laptop",
+      "owner_id": "porch-alice",
+      "model_id": "tiny-local",
+      "usable": true,
+      "quality_tier": 1,
+      "est_cost_units": 0,
+      "est_latency_ms": 1000,
+      "est_energy_mwh": 30,
+      "free_memory_mib": 1024,
+      "required_memory_mib": 500
+    },
+    {
+      "node_id": "bob-desktop",
+      "owner_id": "porch-bob",
+      "model_id": "medium-peer",
+      "usable": true,
+      "quality_tier": 2,
+      "est_cost_units": 3,
+      "est_latency_ms": 2000,
+      "est_energy_mwh": 120,
+      "free_memory_mib": 8192,
+      "required_memory_mib": 4096
+    }
+  ],
+  "grants": [
+    {
+      "grant_id": "demo-grant-bob-to-alice",
+      "owner_id": "porch-bob",
+      "grantee_id": "porch-alice",
+      "node_id": "bob-desktop",
+      "model_id": "medium-peer",
+      "expires_at": "2030-01-01T00:00:00Z",
+      "allowed_data_classes": [
+        "SYNTHETIC"
+      ],
+      "max_cost_units": 5,
+      "revoked": false
+    }
+  ]
+}
