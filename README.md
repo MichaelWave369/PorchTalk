@@ -28,6 +28,13 @@ The example contains two **synthetic** Porches. Alice's laptop doesn't meet the 
 
 CLI exit codes: `0` route selected, `1` no eligible route, `2` invalid scenario. The `--at` flag simulates time offline. It is not a trusted clock. The JSON fixture is entirely user-authored metadata, not verified node identity or genuine authorization.
 
+
+## Gate B1: offline authenticated grant research
+
+An opt-in HMAC-based **offline test module** now demonstrates short-lived, one-use claim envelopes scoped to a specific owner, grantee, request, node and model. Its tests reject tampering, replay, expired or revoked grants, exceeded cost budgets and private-data grants.
+
+**Not a LAN security claim:** This is symmetric-key authentication, not public-key identity or proof of independent owner approval. The replay guard and revocation registry are process-local, time is supplied by the caller, and no networking, execution, model weights, or production grants are involved. Gate A does not automatically call Gate B1. Read [Gate B1 threat model](docs/AUTH_ENVELOPES.md) before attempting any transport integration.
+
 ## First real-world milestone (NOT implemented)
 
 Two PCs on a private wired LAN, authenticated with explicit grants and a trusted execution gateway. Before enabling this, we need peer authentication, replay resistance, sandboxing, revocation checks during jobs, energy/resource ceilings, human approval, real benchmark receipts and independent security review.
