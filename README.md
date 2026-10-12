@@ -51,6 +51,14 @@ PorchTalk now has a **single-connection TLS 1.3 mutual-authentication lab** on `
 
 Run `python scripts/demo_loopback_first_knock.py` after installing dependencies, and read [The First Knock: test boundaries](docs/FIRST_KNOCK.md). A green loopback lab is NOT evidence of production readiness or an actual two-PC connection.
 
+## Gate B4a: Preparing two separate PCs, safely
+
+We now have **portable signed PUBLIC-key enrollment cards** with independent full-fingerprint confirmation required before a new device is pinned as trusted. An offline RFC1918 **same-/24 address planning check** rejects accidental public or unapproved endpoints. See [Two-PC readiness](docs/TWO_PC_READINESS.md).
+
+This does **not** open LAN sockets, enroll real PCs automatically, store persistent private signing keys, run models or grant resources. Public cards contain **no private-key material**; the included demo is synthetic and its implicit fixture approval must never be used on real devices.
+
+Run `python scripts/demo_two_pc_readiness.py` for the entirely offline example.
+
 ## First real-world milestone (NOT implemented)
 
 Two PCs on a private wired LAN, authenticated with explicit grants and a trusted execution gateway. Before enabling this, we need peer authentication, replay resistance, sandboxing, revocation checks during jobs, energy/resource ceilings, human approval, real benchmark receipts and independent security review.
