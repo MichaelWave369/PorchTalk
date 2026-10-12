@@ -19,6 +19,8 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Compile Python sources
         run: python -m compileall -q porchtalk
+      - name: Gate B4a offline identity card + LAN plan smoke test
+        run: python scripts/demo_two_pc_readiness.py
       - name: Gate B3 loopback-only TLS smoke test
         run: python scripts/demo_loopback_first_knock.py
       - name: Test offline sample
