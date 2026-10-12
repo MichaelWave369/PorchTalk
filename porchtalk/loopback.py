@@ -60,6 +60,8 @@ def _read_frame(sock: ssl.SSLSocket | socket.socket) -> dict[str, Any]:
         raise FirstKnockDenied("frame exceeds fixed limit or is empty")
     try:
         frame = json.loads(_recv_exact(sock, size).decode("utf-8"))
+    except FirstKnockDenied:
+        raise
     except (ValueError, UnicodeError) as exc:
         raise FirstKnockDenied("malformed frame") from exc
     if type(frame) is not dict:
