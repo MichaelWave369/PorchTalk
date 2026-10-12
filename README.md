@@ -4,7 +4,7 @@
 
 PorchTalk is the proposed consent-first, budget-aware inference routing policy layer for the **Infinite Porch / Infinite Commons** ecosystem. It is independently implemented research code, intended to complement **PhiOS**, **PhiPie**, **Super Φ.Vessel / Crane Fly**, **BudgetGenius**, and **PhiStream**, not duplicate their runtimes.
 
-**Current status: v0.5.0 research prototype.** It evaluates offline routing, tests signed consent claims, device fingerprints and loopback TLS 1.3, and can save experimental passphrase-encrypted device identities. **It does not discover LAN devices, connect two physical PCs, execute models, move weights, or permit actual resource sharing.**
+**Current status: v0.6.0 research prototype.** It evaluates offline routing, tests signed consent claims, device fingerprints and loopback TLS 1.3, and can save experimental passphrase-encrypted device identities. **It does not discover LAN devices, connect two physical PCs, execute models, move weights, or permit actual resource sharing.**
 
 ## The first six rules
 
@@ -66,6 +66,20 @@ PorchTalk now includes an **optional experimental passphrase-encrypted Ed25519 i
 The file uses scrypt + AES-256-GCM with authenticated metadata, refuses overwrite and rejects altered data. **This is not OS-backed Windows DPAPI/TPM protection or production key custody**; no real-device LAN bind or compute grant is enabled. In particular, the B3 loopback harness's temporary PEM-key approach is still unsuitable for persistent real-world keys.
 
 Read [encrypted device vault limitations and CLI](docs/ENCRYPTED_IDENTITY_VAULT.md) before using any identity on a real PC. Try the safe synthetic restart demo with `python scripts/demo_encrypted_identity.py`.
+
+## Gate B4c: manual two-PC public-key pairing
+
+PorchTalk now includes an **interactive offline pairing CLI**. You can inspect a received *untrusted* signed public card, explicitly pin it after entering the **entire independently verified 64-character fingerprint**, inspect locally pinned keys, or revoke a trusted peer with a second exact confirmation.
+
+The pairing command has **no `--yes` option, won't accept piped confirmations**, and creates no trust database before the operator confirms both steps. On POSIX, the trust directory/file must be private; Windows ACL checks still require operator review. Both PCs would need to repeat the process independently.
+
+```sh
+python -m porchtalk.pair_cli --help
+```
+
+Full Windows-oriented steps and threat limitations: [Human Pairing Ceremony](docs/HUMAN_PAIRING.md).
+
+**This is NOT a live LAN handshake.** The software cannot independently prove that the user obtained the fingerprint from the physical peer, and neither pairing nor a public identity card authorizes compute sharing.
 
 ## First real-world milestone (NOT implemented)
 
