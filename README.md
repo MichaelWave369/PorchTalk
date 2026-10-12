@@ -43,6 +43,14 @@ An opt-in HMAC-based **offline test module** now demonstrates short-lived, one-u
 
 Run `python -m pip install -e .` and `python -m unittest discover -s tests -v`, or inspect [Gate B2 documentation](docs/DEVICE_IDENTITY.md). `cryptography` provides audited Ed25519 primitives; PorchTalk implements protocol glue only.
 
+## Gate B3: The First Knock, a real loopback TLS test
+
+PorchTalk now has a **single-connection TLS 1.3 mutual-authentication lab** on `127.0.0.1`, with ephemeral test certificates, manual Gate B2 trust pins, signed challenges and 4 KiB message limits. The laboratory listener cannot bind to your LAN, accepts no commands, transfers no model weights, and cannot run a job.
+
+**Critical caveat:** The standard-library TLS setup briefly requires an unencrypted ephemeral PEM key file in a temporary directory (restricted permissions where supported); it is deleted immediately after context initialization. This is **test-only**, not secure production key storage, particularly on Windows. A real two-PC deployment requires separately designed enrollment, key management, authentication and operator approval.
+
+Run `python scripts/demo_loopback_first_knock.py` after installing dependencies, and read [The First Knock: test boundaries](docs/FIRST_KNOCK.md). A green loopback lab is NOT evidence of production readiness or an actual two-PC connection.
+
 ## First real-world milestone (NOT implemented)
 
 Two PCs on a private wired LAN, authenticated with explicit grants and a trusted execution gateway. Before enabling this, we need peer authentication, replay resistance, sandboxing, revocation checks during jobs, energy/resource ceilings, human approval, real benchmark receipts and independent security review.
