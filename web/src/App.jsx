@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { decide } from './routing.js'
+import EvidenceDesk from './EvidenceDesk.jsx'
 import {
   Activity, ArrowDownRight, ArrowRight, ArrowUpRight, Ban, BookOpen, Cable,
   Check, CheckCircle2, ChevronDown, ChevronRight, CircleDot, Clock3,
@@ -50,6 +51,7 @@ const NAV = [
   { id: 'nodes', label: 'Porch Nodes', Icon: Network },
   { id: 'trust', label: 'Trust & Consent', Icon: ShieldCheck },
   { id: 'evidence', label: 'Evidence Ledger', Icon: FileCheck2 },
+  { id: 'desk', label: 'Evidence Desk', Icon: Database },
 ]
 
 const GATES = [
@@ -442,6 +444,12 @@ function App() {
             <div className="trust-status"><div className="trust-status-icon"><Shield size={21} /></div><span>{request.allowRemote && (grants.neighbor || grants.salvage) ? 'Synthetic peer consideration permitted for PUBLIC/SYNTHETIC requests only.' : 'Remote fallback remains denied unless both sides opt in.'}</span><button className="text-button" onClick={() => navigate('lab')}>Try a route <ArrowRight size={16} /></button></div>
           </section>
           <div className="inline-note"><ShieldAlert size={20} /><div><strong>Browser toggles are not real resource grants.</strong><p>No cryptographic keys or identities are created in this website. For the implemented Python research code, review the audited limitations and the manual pairing runbooks in the repository.</p></div></div>
+        </>}
+
+        {page === 'desk' && <>
+          <SectionHeading eyebrow="FIELD DESK / OFFLINE EVIDENCE" title="The Evidence Desk"
+            text="Read Windows observation reports and compare two signed-handshake claim receipts, entirely in this browser tab. No private files or actual network connections." />
+          <EvidenceDesk />
         </>}
 
         {page === 'evidence' && <>
