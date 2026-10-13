@@ -161,3 +161,10 @@ test('validated bounded summaries may be compared without keeping original JSON'
   assert.equal(result.status, 'SELF_REPORTED_WINDOWS_PLANS_MATCH_WITH_MANUAL_BLOCKERS')
   assert.equal(result.lan_connection_authorized, false)
 })
+
+
+test('Windows PowerShell UTF-8 BOM report loads without relaxing schema checks', async () => {
+  const json = '\uFEFF' + JSON.stringify(sample)
+  const parsed = await readLocalJSON({name:'windows-a.json',size:Buffer.byteLength(json),text:async()=>json})
+  assert.equal(inspectWindowsReport(parsed).status, 'UNTRUSTED_WINDOWS_OBSERVATION_INSPECTED')
+})
