@@ -139,3 +139,61 @@ export async function readLocalJSON(file) {
     throw new EvidenceInputError('Invalid JSON file')
   }
 }
+
+
+/** Compare two independently supplied Windows *observations*, not devices.
+ * A matching report pair is NEVER a networking, firewall or security approval.
+ * Per-device observations can be fabricated or stale, so all caveats remain.
+ */
+export function compareWindowsReports(left, right) {
+  const a = inspectWindowsReport(left)
+  const b = inspectWindowsReport(right)
+  if (a.observed_local_ipv4 === b.observed_local_ipv4) {
+    throw new EvidenceInputError('Both files claim the same local device IPv4 address')
+  }
+  if (a.observed_local_ipv4 !== b.proposed_peer_ipv4 ||
+      a.proposed_peer_ipv4 !== b.observed_local_ipv4) {
+    throw new EvidenceInputError('The two machines do not cross-reference each other\'s IPv4 addresses')
+  }
+  if (a.proposed_port !== b.proposed_port) {
+    throw new EvidenceInputError('Proposed TCP ports differ between the two files')
+  }
+  if (!a.private_address_plan || !b.private_address_plan) {
+    throw new EvidenceInputError('At least one private IPv4 plan fails the static check')
+  }
+
+  const findings = []
+  if (!a.local_interface_claimed) findings.push('PORCH_A_LOCAL_INTERFACE_NOT_OBSERVED')
+  if (!b.local_interface_claimed) findings.push('PORCH_B_LOCAL_INTERFACE_NOT_OBSERVED')
+  if (a.firewall_enabled_claimed !== true) findings.push('PORCH_A_FIREWALL_NOT_CONFIRMED_ENABLED')
+  if (b.firewall_enabled_claimed !== true) findings.push('PORCH_B_FIREWALL_NOT_CONFIRMED_ENABLED')
+  if (a.port_listening_claimed === true) findings.push('PORCH_A_PROPOSED_PORT_ALREADY_LISTENING')
+  if (b.port_listening_claimed === true) findings.push('PORCH_B_PROPOSED_PORT_ALREADY_LISTENING')
+  if (a.port_listening_claimed === null) findings.push('PORCH_A_PORT_STATUS_UNKNOWN')
+  if (b.port_listening_claimed === null) findings.push('PORCH_B_PORT_STATUS_UNKNOWN')
+  if (a.inspection_error_count > 0) findings.push('PORCH_A_INSPECTION_ERRORS')
+  if (b.inspection_error_count > 0) findings.push('PORCH_B_INSPECTION_ERRORS')
+  if (a.network_category_claimed !== 'Private') findings.push('PORCH_A_NETWORK_PROFILE_NOT_PRIVATE')
+  if (b.network_category_claimed !== 'Private') findings.push('PORCH_B_NETWORK_PROFILE_NOT_PRIVATE')
+
+  return {
+    status: 'SELF_REPORTED_WINDOWS_PLANS_MATCH_WITH_MANUAL_BLOCKERS',
+    porch_a_ipv4: a.observed_local_ipv4,
+    porch_b_ipv4: b.observed_local_ipv4,
+    proposed_port: a.proposed_port,
+    matching_static_private_ipv4_plan: true,
+    observation_warnings: findings,
+    manual_checks_remain: [
+      'VERIFY_FULL_PUBLIC_KEY_FINGERPRINTS_ON_BOTH_PHYSICAL_PCS',
+      'VERIFY_WINDOWS_ACLS_AND_OS_PROTECTED_PRIVATE_KEYS',
+      'INSPECT_EXACT_INBOUND_FIREWALL_RULE_AND_ROUTER_PORT_FORWARDING',
+      'VERIFY_ACTUAL_INTERFACE_AND_PRIVATE_NETWORK_OWNERSHIP',
+      'OBTAIN_INDEPENDENT_SECURITY_REVIEW_OF_EXPERIMENTAL_PROTOCOL',
+      'GET_NEW_EXPLICIT_OPERATOR_APPROVAL_BEFORE_NETWORKING',
+    ],
+    independently_attested: false,
+    real_hardware_verified: false,
+    lan_connection_authorized: false,
+    compute_authorized: false,
+  }
+}
