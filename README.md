@@ -113,6 +113,11 @@ The comparator checks mirrored device names, public-key fingerprints and transcr
 
 GitHub CI now additionally runs on Windows. This found and fixed actual SQLite handle-lifecycle issues; no physical two-PC Windows test has been performed.
 
+## Gate C3: Capture observations from actual Windows PCs
+
+The new [Windows Field Capture runbook](docs/FIELD_CAPTURE.md) and `scripts/capture_windows_field_evidence.ps1` collect **copy-only read-only network observations** on a manually chosen physical PC. The tool creates a fresh JSON file in an existing local folder and prints its SHA-256 integrity checksum. It does not overwrite older reports, change Windows firewall rules, open a TCP socket, or access Porch private keys.
+
+Run the capture independently on each PC using **actual** `ipconfig` addresses, then import only copies of those JSON reports to the [React Evidence Desk](https://michaelwave369.github.io/PorchTalk/). Consistent reports are **self-reported**, not physical-hardware attestation, an independently audited transport, or a grant to use compute.
 ## Future compute-sharing milestone (NOT implemented)
 
 Two PCs on a private wired LAN, authenticated with explicit grants and a trusted execution gateway. Before enabling this, we need peer authentication, replay resistance, sandboxing, revocation checks during jobs, energy/resource ceilings, human approval, real benchmark receipts and independent security review.
