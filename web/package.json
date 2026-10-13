@@ -7,7 +7,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "check": "node --test tests/routing.test.mjs tests/evidence.test.mjs"
+    "check": "node --test tests/routing.test.mjs tests/evidence.test.mjs tests/tiny-ai-bridge.test.mjs"
   },
   "dependencies": {
     "react": "19.2.0",

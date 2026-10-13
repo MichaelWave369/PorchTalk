@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>PorchTalk × PocketBrain · Independent Consumer Lab</title>
+  <style>
+    :root { color-scheme: dark; font-family: ui-sans-serif, system-ui, sans-serif; background: #071014; color: #eaf4ef; line-height: 1.55; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 2rem 1rem; }
+    main { width: min(100%, 800px); margin: auto; }
+    h1 { margin: .4rem 0; font-size: clamp(1.7rem, 4vw, 2.4rem); }
+    a { color: #9df5c4; }
+    .eyebrow { color: #a4f9c9; letter-spacing: .13em; font-size: .75rem; text-transform: uppercase; }
+    section { background: #101e23; border: 1px solid #355047; border-radius: 14px; padding: 1.1rem; margin: 1rem 0; }
+    p, li { color: #b3c9c3; }
+    label { display:block; margin: .8rem 0 .3rem; }
+    button { border: 0; padding: .7rem 1rem; border-radius: 9px; background: #9df5c4; font: inherit; font-weight: 700; color: #08221a; cursor: pointer; }
+    button.secondary { color: #d9ffed; background: #20473a; border: 1px solid #5d9e7f; }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    select, textarea { width: 100%; border: 1px solid #44645b; border-radius: 8px; background: #061518; color: #eaf4ef; padding: .7rem; font: inherit; }
+    textarea { min-height: 90px; }
+    output, pre { display: block; padding: .9rem; border: 1px solid #27443c; border-radius: 8px; background: #071519; white-space: pre-wrap; overflow-wrap: anywhere; }
+    #tiny-output { min-height: 5em; }
+    small { color: #a5c1b5; }
+    #tiny-origin { color: #d6fa95; }
+  </style>
+</head>
+<body>
+<main>
+  <a href="./">← PorchTalk Control Room</a>
+  <div class="eyebrow">Experimental · Explicit Opt-In · Read-only Integration</div>
+  <h1>PorchTalk × PocketBrain Tiny</h1>
+  <p>A separate application's consumption of the PocketBrain Tiny SDK. This is <strong>not</strong> PorchTalk's compute router, identity system, peer sharing, remote inference, or production readiness test.</p>
+  <section>
+    <h2>1. Origin and network boundary</h2>
+    <p id="tiny-origin">Checking origin…</p>
+    <p><small>Both PorchTalk and PocketBrain GitHub Pages paths are served from michaelwave369.github.io, so the live Pages version tests <strong>cross-application</strong> reuse, NOT distinct browser origins. Running PorchTalk locally at http://127.0.0.1:5173 with the remote PocketBrain SDK tests a distinct origin. The tool labels this honestly.</small></p>
+    <p><strong>Privacy and download notice:</strong> Opening this page does not import the SDK. Clicking Load downloads PocketBrain JavaScript from GitHub Pages, Transformers.js runtime code from jsDelivr, and model/tokenizer files from Hugging Face. The first load can exceed 100 MB. Network requests expose ordinary metadata to those hosts; your prompt is processed locally in the browser. No peer contact or PorchTalk authority is requested.</p>
+    <label for="tiny-backend">Backend</label>
+    <select id="tiny-backend">
+      <option value="auto">Auto: WebGPU if available; otherwise CPU/WASM</option>
+      <option value="webgpu">WebGPU q4f16</option>
+      <option value="wasm">CPU/WASM q8, may be slow</option>
+    </select>
+    <p><button id="tiny-load">Explicitly load PocketBrain AI</button></p>
+    <p id="tiny-status" role="status" aria-live="polite">Idle · no SDK or model requested.</p>
+  </section>
+  <section>
+    <h2>2. Generate through another application's SDK</h2>
+    <label for="tiny-mode">Decoding</label>
+    <select id="tiny-mode">
+      <option value="baseline">Baseline greedy</option>
+      <option value="guarded">Repeat guard</option>
+    </select>
+    <label for="tiny-prompt">Prompt</label>
+    <textarea id="tiny-prompt" maxlength="4000">In one sentence, what should an AI ask before helping another computer?</textarea>
+    <p><button id="tiny-generate" disabled>Generate on this device</button></p>
+    <output id="tiny-output" aria-live="polite">Load the model to begin.</output>
+  </section>
+  <section>
+    <h2>3. Independent-consumer evidence</h2>
+    <p><small>Copies a structured receipt only when clicked. No prompt, generated response, IP or credentials are embedded in this JSON. Origin text is environment-specific but cannot prove independent security or model parity.</small></p>
+    <p><button id="tiny-copy" class="secondary" disabled>Copy local JSON receipt</button></p>
+    <pre id="tiny-receipt">No completed inference.</pre>
+  </section>
+  <section>
+    <h2>Unverified gates</h2>
+    <p>This is an experimental model consumer. The upstream SDK entrypoint is version-labeled but its underlying PocketBrain adapter remains mutable. Exact ONNX revision/hash, independent parity, CORS across arbitrary origins, cache behavior and production safety are still unverified. It does not modify the simulation, trust ledger, or real PorchTalk transport.</p>
+  </section>
+</main>
+<script type="module" src="./tiny-ai-lab.mjs"></script>
+</body>
+</html>

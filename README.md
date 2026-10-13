@@ -127,3 +127,8 @@ See [Architecture and Gates](docs/ARCHITECTURE.md).
 **License:** MIT for PorchTalk source. Third-party model weights, checkpoints and execution runtimes have separate terms.
 
 **Φ369:** Ledger above ego. The toaster is not allowed to borrow your GPU without permission.
+
+
+## PocketBrain Tiny cross-application experiment
+
+An isolated **opt-in Tiny AI Lab** is available under PorchTalk's separate static page: `/PorchTalk/tiny-ai-lab.html`. This consumer uses the PocketBrain SDK only when explicitly requested, and it is **not** integrated into PorchTalk's real routing, consent or transport systems. Both repositories' GitHub Pages sites share one browser origin; an independent-origin import test requires serving the PorchTalk lab from a different origin, such as localhost. See [protocol boundaries](docs/POCKETBRAIN_TINY_CONSUMER.md).
