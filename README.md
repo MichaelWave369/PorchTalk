@@ -6,6 +6,14 @@ PorchTalk is the proposed consent-first, budget-aware inference routing policy l
 
 **Current status: v0.8.0 experimental protocol prototype.** It evaluates offline routing, tests signed consent claims, device fingerprints and loopback TLS 1.3, and can save experimental passphrase-encrypted device identities. **A separately opted-in, unaudited proof handshake can now connect two manually paired private-LAN devices; real two-PC hardware testing is still unverified. It does not discover devices, execute models, move weights, or permit actual resource sharing.**
 
+## React Control Room (GitHub Pages)
+
+The standalone [PorchTalk React Control Room](https://michaelwave369.github.io/PorchTalk/) provides an interactive **browser-only** visualization of the neighborhood: local-first routing, fictional Porch nodes, simulated consent settings, Gate A–B4 research status and local JSON simulation receipts.
+
+**Important:** This is NOT a real hardware dashboard or live distributed compute service. Browser toggles cannot grant compute access or interact with the Python identity/transport modules; the demo's resource estimates and models are illustrative. No secrets, model weights or network connections are used by the app.
+
+Source and setup: [web/README.md](web/README.md). React Pages deployment occurs through the new GitHub Actions workflow after a reviewed merge to `main`; Pages must be configured to use GitHub Actions.
+
 ## The first six rules
 
 1. **Local-first:** Any eligible local model beats remote alternatives.
