@@ -7,7 +7,6 @@ The two input files may have been fabricated or altered after generation.
 
 from __future__ import annotations
 
-import hashlib
 import json
 from pathlib import Path
 import re
@@ -70,6 +69,7 @@ def inspect_receipt(raw: Any) -> dict[str, Any]:
         raise EvidenceDenied("security boundary claim mismatch")
     warnings = raw["warnings"]
     if (type(warnings) is not list or len(warnings) != 3
+            or any(type(x) is not str for x in warnings)
             or set(warnings) != {"NOT_SECURITY_AUDITED", "ONE_SHOT_ONLY", "NO_COMMAND_OR_MODEL_PAYLOAD"}):
         raise EvidenceDenied("critical caveat missing from receipt")
     return dict(raw)
