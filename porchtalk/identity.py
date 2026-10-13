@@ -208,7 +208,7 @@ class PinnedPeers:
             raise IdentityDenied("invalid enrolled key") from exc
 
     def consume_once(self, direction: str, peer_id: str, nonce: str) -> None:
-        if direction not in ("challenge_responded", "response_verified"):
+        if direction not in ("challenge_responded", "response_verified", "lan_client_hello", "lan_server_reply"):
             raise IdentityDenied("invalid replay direction")
         peer = _ident(peer_id, "peer_id")
         token = _nonce(nonce)

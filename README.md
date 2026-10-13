@@ -4,7 +4,7 @@
 
 PorchTalk is the proposed consent-first, budget-aware inference routing policy layer for the **Infinite Porch / Infinite Commons** ecosystem. It is independently implemented research code, intended to complement **PhiOS**, **PhiPie**, **Super Φ.Vessel / Crane Fly**, **BudgetGenius**, and **PhiStream**, not duplicate their runtimes.
 
-**Current status: v0.6.0 research prototype.** It evaluates offline routing, tests signed consent claims, device fingerprints and loopback TLS 1.3, and can save experimental passphrase-encrypted device identities. **It does not discover LAN devices, connect two physical PCs, execute models, move weights, or permit actual resource sharing.**
+**Current status: v0.7.0 experimental protocol prototype.** It evaluates offline routing, tests signed consent claims, device fingerprints and loopback TLS 1.3, and can save experimental passphrase-encrypted device identities. **A separately opted-in, unaudited proof handshake can now connect two manually paired private-LAN devices; real two-PC hardware testing is still unverified. It does not discover devices, execute models, move weights, or permit actual resource sharing.**
 
 ## The first six rules
 
@@ -81,7 +81,17 @@ Full Windows-oriented steps and threat limitations: [Human Pairing Ceremony](doc
 
 **This is NOT a live LAN handshake.** The software cannot independently prove that the user obtained the fingerprint from the physical peer, and neither pairing nor a public identity card authorizes compute sharing.
 
-## First real-world milestone (NOT implemented)
+## Gate B4d: Experimental First Two-PC Knock
+
+PorchTalk now includes a **manually authorized, one-shot private-LAN encrypted proof exchange**. Each side must already be human-paired through B4c. The operator must type an exact intent phrase before the CLI unlocks the local identity and before any connection occurs. RFC1918 same-/24 address restrictions, one-time signed ephemeral keys, bounded frames, persistent replay checks and two AES-GCM-encrypted fixed confirmation messages are used.
+
+**This is NOT TLS, NOT security-audited, and NOT production network security.** Signed identity metadata remains visible on the wire. The actual Windows two-PC experience has **not been tested by CI**. Unlike our old B3 loopback TLS harness, this protocol does **not** write unlocked persistent private keys into a temporary PEM file.
+
+Run `python -m porchtalk.lan_cli --help` to inspect commands without connecting. Read the [first two-PC knock operator runbook](docs/FIRST_TWO_PC_KNOCK.md) and its Windows firewall/identity handling requirements before testing physical hardware.
+
+**There is still NO remote model inference, weight transfer, job dispatch, command execution or GPU sharing.**
+
+## Future compute-sharing milestone (NOT implemented)
 
 Two PCs on a private wired LAN, authenticated with explicit grants and a trusted execution gateway. Before enabling this, we need peer authentication, replay resistance, sandboxing, revocation checks during jobs, energy/resource ceilings, human approval, real benchmark receipts and independent security review.
 
