@@ -365,3 +365,52 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
 }
+
+
+/* Gate C1: local read-only evidence desk */
+.evidence-desk { display:grid;gap:18px }
+.desk-banner {padding:22px 24px;background:linear-gradient(130deg,#17332d,#102426);border:1px solid #3b654f;border-radius:12px}
+.desk-banner>span {display:flex;gap:9px;align-items:center;color:#a4f0c3;letter-spacing:1.1px;font-size:11px;font-weight:840}
+.desk-banner>p {margin:12px 0;color:#a5bfaf;line-height:1.7;font-size:12px;max-width:780px}
+.desk-actions {display:flex;flex-wrap:wrap;gap:10px;margin-top:17px}
+.desk-example-warning {margin-top:16px;padding:12px 13px;border:1px solid #745b36;border-radius:9px;background:#362d20;display:flex;gap:10px;align-items:flex-start;color:#f3d59b;font-size:11px;line-height:1.55}
+.desk-example-warning svg {flex-shrink:0}
+.desk-status {color:#b6c5a8;font-size:9px;letter-spacing:.7px;font-weight:790;text-align:right}
+.desk-file {display:flex;align-items:center;flex-wrap:wrap;gap:14px;padding:18px;background:#0d1b1e;border:1px dashed #3b5950;border-radius:10px}
+.desk-file-icon {width:43px;height:43px;flex:0 0 43px;background:#1c4337;color:#a3e9c0;border-radius:10px;display:grid;place-items:center}
+.desk-file-copy {flex:1;min-width:140px}
+.desk-file-copy strong {font-size:13px}
+.desk-file-copy p {font-size:11px;line-height:1.65;color:#8ca79e;margin:6px 0 0}
+.desk-file-name {display:block;font-size:10px;margin-top:8px;color:#92dac0;overflow-wrap:anywhere}
+.desk-file-button {display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;border:1px solid #4f8c6a;background:#224736;color:#d0fae0;border-radius:8px;padding:10px 14px;font-size:11px;font-weight:750;position:relative}
+.desk-file-button:hover {background:#30654b}
+.desk-file-button:focus-within {outline:2px solid #b8f9ce;outline-offset:3px}
+.desk-file-button input {position:absolute;opacity:0;width:1px;height:1px;left:0;bottom:0}
+.desk-file-status {width:100%;display:flex;gap:7px;color:#89dcb4;align-items:center;font-size:10px}
+.desk-results {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px;margin-top:17px}
+.desk-results>div {background:#0d1b1f;border:1px solid #2e4745;border-radius:8px;padding:13px;min-width:0}
+.desk-results small {display:block;color:#79998e;font-size:10px;line-height:1.4;margin-bottom:8px}
+.desk-results strong {font-size:12px;font-weight:790;overflow-wrap:anywhere;color:#d0e7d7}
+.desk-advisory {margin-top:17px;padding:16px;border:1px solid #75633c;background:#3933226e;border-radius:9px;display:flex;gap:12px;line-height:1.6;color:#f0d7a1}
+.desk-advisory>svg {flex-shrink:0}
+.desk-advisory strong {font-size:12px}
+.desk-advisory p {margin:4px 0 0;color:#c6bb99;font-size:11px}
+.desk-placeholder {color:#89a39b;font-size:11px;line-height:1.75;margin:16px 0 2px}
+.desk-twins {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.desk-twins .desk-file {align-items:flex-start}
+.desk-twins .desk-file-button {width:100%}
+.desk-compare {margin-top:17px}
+.desk-compare:disabled {cursor:not-allowed;opacity:.4;transform:none}
+.desk-pass {display:flex;align-items:flex-start;gap:13px;margin-top:17px;padding:16px;border:1px solid #3d8861;background:#193d30;border-radius:9px}
+.desk-pass>svg {flex-shrink:0;color:#b4f2cb}
+.desk-pass strong {font-size:13px;color:#c9f5d9}
+.desk-pass p {font-size:11px;color:#b4d8c1;line-height:1.6;overflow-wrap:anywhere;margin:7px 0}
+.desk-pass small {font-size:10px;color:#f1cb8b;line-height:1.7}
+.desk-error {display:flex;align-items:flex-start;gap:11px;border:1px solid #995548;background:#422721;color:#ffd4c4;padding:15px;border-radius:10px;font-size:12px;line-height:1.55}
+.desk-error svg {flex-shrink:0}
+.desk-footer-note {display:flex;gap:13px;align-items:flex-start;color:#b7c39c;padding:17px;border:1px solid #505d3d;border-radius:10px;background:#2a302055}
+.desk-footer-note svg {flex-shrink:0;margin-top:2px}
+.desk-footer-note p {margin:0;font-size:11px;line-height:1.85}
+.desk-footer-note code {color:#d9eabd;overflow-wrap:anywhere}
+@media(max-width:1000px){.desk-results{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.desk-results,.desk-twins{grid-template-columns:1fr}.desk-banner{padding:18px}.desk-file{padding:13px}.desk-panel .panel-head{flex-wrap:wrap}.desk-file-button{width:100%}}
