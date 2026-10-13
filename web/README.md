@@ -14,6 +14,18 @@ A standalone **React + Vite** GitHub Pages interface for PorchTalk's Infinite Po
 
 All simulations are local JavaScript. There is no backend, tracking, analytics, externally loaded font, storage permission, websocket, model download or hardware access. A receipt can be downloaded by deliberate user action using a browser Blob, or copied to the clipboard. Its SHA-256 checksum is **not a cryptographic signature or attestation**.
 
+## Evidence Desk: local read-only JSON inspection
+
+The **Evidence Desk** menu lets an operator deliberately select:
+- A local JSON report from `scripts/inspect_windows_readiness.ps1` to view the reported private address plan, Windows interface claims, firewall-profile state and unresolved manual checks.
+- Two separate B4d JSON handshake receipts, saved using `--receipt-out`, to compare mirrored IDs/public-key fingerprints and the claimed matching transcript hash.
+
+Files are **read inside the browser tab, not uploaded**. Import accepts only `.json` files of at most 8 KiB and an exact known schema; no arbitrary JSON fields are displayed or executed. The desk does not save imported data to localStorage, network services, or the repository. Refreshing or clearing the page drops the imported state.
+
+Click **Load synthetic example** to see deliberately fabricated, clearly labeled sample evidence without owning two PCs. Loading a real file resets synthetic evidence so fake and imported receipts cannot be accidentally mixed.
+
+**Limits:** The browser can only check consistency of untrusted JSON. It does not cryptographically verify signed handshake records, prove that either physical PC was contacted, or authorize remote computation. It cannot detect duplicate JSON object keys; the canonical Python `python -m porchtalk.evidence_cli` tool performs stricter offline parsing and remains the reference checker. Don't select `.porchkey` vault files, private keys, passwords or confidential logs.
+
 ## Development
 
 Requires Node.js 22 or later. From the repository root:
