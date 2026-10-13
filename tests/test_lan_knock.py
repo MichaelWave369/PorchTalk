@@ -221,7 +221,8 @@ class LoopbackIntegrationTests(unittest.TestCase):
         self.assertEqual(result["server"]["transcript_sha256"], result["client"]["transcript_sha256"])
         for receipt in result.values():
             self.assertEqual(receipt["status"], "LAN_ONE_SHOT_ENCRYPTED_KNOCK_PASS")
-            self.assertTrue(receipt["channel_encrypted"])
+            self.assertTrue(receipt["proof_messages_encrypted"])
+            self.assertTrue(receipt["handshake_identity_metadata_visible"])
             self.assertFalse(receipt["compute_authorized"])
             self.assertFalse(receipt["route_authorized"])
 
