@@ -65,17 +65,21 @@ try {
 
     # Symlinks may require elevated Windows privileges and are not mandatory.
     $linkedFolder = Join-Path $folder 'linked-destination'
+    $symlinkWasCreated = $false
     try {
         New-Item -ItemType SymbolicLink -Path $linkedFolder -Target $folder -ErrorAction Stop | Out-Null
+        $symlinkWasCreated = $true
+    }
+    catch {
+        Write-Output 'Symlink creation unavailable; mandatory read-only controls still checked.'
+    }
+    if ($symlinkWasCreated) {
         $denied = $false
         try {
             & $captureScript -LocalIPv4 '192.168.10.15' -PeerIPv4 '192.168.10.20' -Port 54321 -OutputDirectory $linkedFolder | Out-Null
         }
         catch { $denied = $true }
         if (!$denied) { throw 'Reparse point target must be rejected' }
-    }
-    catch [System.UnauthorizedAccessException] {
-        Write-Output 'Windows runner disallows symlink fixture; permission-independent checks still passed.'
     }
 
     Write-Output 'Gate C3 passed: copy-only JSON output, SHA256 checksum, no secret read, default-deny semantics.'
