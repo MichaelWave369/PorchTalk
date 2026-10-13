@@ -136,6 +136,8 @@ export default function EvidenceDesk() {
       <span><LockKeyhole size={17} /> BROWSER-LOCAL / NO UPLOADS</span>
       <p>Inspect locally saved PorchTalk evidence. Files are read inside this tab only. Never select passwords, identity vaults, private keys, or confidential logs.</p>
       <div className="desk-actions">
+        <a className="outlined-btn" href="https://github.com/MichaelWave369/PorchTalk/blob/main/docs/FIELD_CAPTURE.md"
+          target="_blank" rel="noopener noreferrer"><Info size={16} /> Field capture guide</a>
         <button className="outlined-btn" type="button" onClick={example}><FileJson size={16} /> Load synthetic example</button>
         <button className="outlined-btn" type="button" onClick={clearAll}><RotateCcw size={16} /> Clear imported evidence</button>
       </div>
