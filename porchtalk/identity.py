@@ -159,20 +159,26 @@ class PinnedPeers:
 
     def __init__(self, db_path: str | Path):
         self.db = sqlite3.connect(str(db_path), timeout=5.0, isolation_level=None)
-        self.db.execute("PRAGMA busy_timeout=5000")
-        self.db.execute("""
-            CREATE TABLE IF NOT EXISTS peers (
-                device_id TEXT PRIMARY KEY,
-                public_key BLOB NOT NULL,
-                revoked INTEGER NOT NULL DEFAULT 0
-            )""")
-        self.db.execute("""
-            CREATE TABLE IF NOT EXISTS replay (
-                direction TEXT NOT NULL,
-                peer_id TEXT NOT NULL,
-                nonce TEXT NOT NULL,
-                PRIMARY KEY (direction, peer_id, nonce)
-            )""")
+        try:
+            self.db.execute("PRAGMA busy_timeout=5000")
+            self.db.execute("""
+                CREATE TABLE IF NOT EXISTS peers (
+                    device_id TEXT PRIMARY KEY,
+                    public_key BLOB NOT NULL,
+                    revoked INTEGER NOT NULL DEFAULT 0
+                )""")
+            self.db.execute("""
+                CREATE TABLE IF NOT EXISTS replay (
+                    direction TEXT NOT NULL,
+                    peer_id TEXT NOT NULL,
+                    nonce TEXT NOT NULL,
+                    PRIMARY KEY (direction, peer_id, nonce)
+                )""")
+        except BaseException:
+            # Especially important on Windows: a corrupt SQLite file must
+            # never leave an open OS file handle after failed initialization.
+            self.db.close()
+            raise
 
     def close(self) -> None:
         self.db.close()
