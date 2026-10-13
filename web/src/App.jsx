@@ -281,6 +281,9 @@ function App() {
         <a className="nav-item" href={DOCUMENTATION} target="_blank" rel="noopener noreferrer">
           <BookOpen size={19} /><span>Documentation</span><ExternalLink size={14} className="nav-external" />
         </a>
+        <a className="nav-item" href={`${import.meta.env.BASE_URL}tiny-ai-lab.html`}>
+          <Cpu size={19} /><span>Opt-in Tiny AI Lab</span><ExternalLink size={14} className="nav-external" />
+        </a>
       </div>
       <div className="sidebar-bottom">
         <div className="sidebar-status"><span className="pulse-dot" /> BROWSER RESEARCH LAB</div>

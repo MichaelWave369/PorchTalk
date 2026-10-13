@@ -89,3 +89,10 @@ We intentionally **do not publish a test app from unreviewed feature branches**.
 Do NOT paste identity vault passphrases, private identity files, API keys, unredacted evidence, or confidential data into this UI. The app does not request them. No fake grant is ever sent to the Python network implementation. Production device pairing and real hardware evidence remain manual processes documented under `../docs`.
 
 **Ledger above ego. Consent before compute.**
+
+
+## Opt-in Tiny AI SDK consumer (experimental)
+
+A separate [Tiny AI Lab](https://michaelwave369.github.io/PorchTalk/tiny-ai-lab.html) imports PocketBrain Tiny's candidate SDK **only after a Load click**, then runs actual on-device inference and captures a local nested receipt. The normal Control Room simulation does not load AI or contact peers.
+
+**Cross-origin distinction:** Both GitHub Pages repos share the same `michaelwave369.github.io` origin, despite being different apps. Run the new page from `http://127.0.0.1:5173` on your PC to test an actual distinct browser origin importing the remote SDK. The page labels this difference. The lab cannot execute any PorchTalk router, grants, identities, remote compute, or transfer weights. More at [Tiny SDK consumer test](../docs/POCKETBRAIN_TINY_CONSUMER.md).
