@@ -167,6 +167,10 @@ class LoopbackIntegrationTests(unittest.TestCase):
                 t.enroll(friend.device_id, friend.public_key, operator_approved=True)
             finally:
                 t.close()
+            # B4c pairing creates owner-only SQLite trust files. Reproduce
+            # its permissions here rather than weakening production checks.
+            if os.name == "posix":
+                os.chmod(path, 0o600)
 
     def port(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
