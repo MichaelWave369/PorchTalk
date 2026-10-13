@@ -1,0 +1,50 @@
+name: React Web Check
+
+on:
+  pull_request:
+    paths:
+      - 'web/**'
+      - '.github/workflows/web-check.yml'
+      - '.github/workflows/pages.yml'
+  push:
+    branches:
+      - main
+      - 'feat/react-github-pages-control-room'
+    paths:
+      - 'web/**'
+      - '.github/workflows/web-check.yml'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    name: Build and test React UI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned packages
+        working-directory: web
+        run: npm install --no-audit --no-fund --ignore-scripts
+      - name: Test pure local-first browser routing
+        working-directory: web
+        run: npm run check
+      - name: Build GitHub Pages assets
+        working-directory: web
+        run: npm run build
+      - name: Verify expected output
+        run: |
+          test -s web/dist/index.html
+          test -d web/dist/assets
+          grep -q '/PorchTalk/assets/' web/dist/index.html
+      - name: Upload preview build (not published)
+        uses: actions/upload-artifact@v4
+        with:
+          name: porchtalk-react-preview
+          path: web/dist/
+          retention-days: 7
