@@ -129,7 +129,9 @@ export async function readLocalJSON(file) {
     throw new EvidenceInputError('Evidence exceeds the 8 KiB limit')
   }
   try {
-    const parsed = JSON.parse(data)
+    // Windows PowerShell 5.1 often prefixes UTF-8 output with a BOM.
+    // Accept exactly one leading BOM without relaxing JSON schema checks.
+    const parsed = JSON.parse(data.charCodeAt(0) === 0xFEFF ? data.slice(1) : data)
     if (parsed === null || Array.isArray(parsed) || typeof parsed !== 'object') {
       throw new EvidenceInputError('Top-level JSON must be an object')
     }
