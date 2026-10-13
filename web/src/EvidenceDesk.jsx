@@ -37,6 +37,11 @@ export default function EvidenceDesk() {
   async function loadReport(file) {
     setFeedback('')
     setReadiness(null)
+    if (source === 'SYNTHETIC_EXAMPLE_ONLY') {
+      setLeft(null)
+      setRight(null)
+      setPairResult(null)
+    }
     setSource('NONE')
     try {
       const report = inspectWindowsReport(await readLocalJSON(file))
@@ -51,6 +56,11 @@ export default function EvidenceDesk() {
   async function loadReceipt(file, which) {
     setFeedback('')
     setPairResult(null)
+    if (source === 'SYNTHETIC_EXAMPLE_ONLY') {
+      setReadiness(null)
+      setLeft(null)
+      setRight(null)
+    }
     if (which === 'left') setLeft(null)
     else setRight(null)
     setSource('LOCAL_FILE_UNTRUSTED')
