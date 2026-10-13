@@ -31,3 +31,27 @@ jobs:
         run: python scripts/demo_loopback_first_knock.py
       - name: Test offline sample
         run: python -m porchtalk.cli examples/two_porches.json --at 2026-10-12T18:00:00Z
+
+  windows-readiness:
+    name: Windows readiness (read-only)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install -e .
+      - name: Run all available unit tests on Windows
+        run: python -m unittest discover -s tests -v
+      - name: Validate Windows read-only preflight report
+        shell: pwsh
+        run: |
+          $output = & .\scripts\inspect_windows_readiness.ps1 -LocalIPv4 192.168.10.15 -PeerIPv4 192.168.10.20 -Port 54321 | ConvertFrom-Json
+          if ($output.status -ne "OBSERVATION_ONLY_NOT_AN_AUTHORIZATION") { throw "Must not advertise READY" }
+          if (!$output.static_rfc1918_pair_valid) { throw "Private test address plan should be syntactically valid" }
+          if ($output.sockets_opened_by_this_script -or $output.firewall_modified_by_this_script -or $output.compute_authorized) { throw "Read-only invariant violated" }
+          if ($output.unresolved_manual_checks.Count -lt 5) { throw "Manual blockers not surfaced" }
+          $denied = & .\scripts\inspect_windows_readiness.ps1 -LocalIPv4 8.8.8.8 -PeerIPv4 192.168.10.20 -Port 54321 | ConvertFrom-Json
+          if ($denied.static_rfc1918_pair_valid) { throw "Public address must never be accepted in plan" }
+          Write-Output "Windows observation format and denial cases passed; no real peer was contacted."
