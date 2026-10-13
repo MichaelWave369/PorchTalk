@@ -212,6 +212,7 @@ def _receipt(identity: DeviceIdentity, peer_id: str, remote_fp: str, transcript:
         "status": "LAN_ONE_SHOT_ENCRYPTED_KNOCK_PASS",
         "protocol": PROTOCOL,
         "local_device_id": identity.device_id,
+        "local_fingerprint_sha256": identity.fingerprint,
         "peer_device_id": peer_id,
         "peer_fingerprint_sha256": remote_fp,
         "transcript_sha256": hashlib.sha256(transcript).hexdigest(),
