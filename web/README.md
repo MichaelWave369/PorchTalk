@@ -51,6 +51,11 @@ PC B, reversing the example addresses:
 Copy **only** these read-only JSON files to the browser machine and select them in **Evidence Desk → Local observation inspector**, then click **Compare both Windows reports**. The browser can read UTF-8 with or without the Windows PowerShell BOM. It keeps file contents in this tab only. Do not transfer `.porchkey` vaults, private keys or passphrases.
 
 These files can reveal private IP addresses and network profile observations, so review before posting publicly. Comparing them **does not connect PCs, audit security, modify firewall settings, or authorize a LAN handshake**.
+## Capture real Windows observations, without connecting PCs
+
+PorchTalk now includes an optional [copy-only Windows field capture script](../docs/FIELD_CAPTURE.md). It runs the existing read-only inspector, validates a conservative private-address plan, and saves an **exclusive-create** JSON report in an existing, operator-selected local folder. It prints a SHA-256 checksum; that is only an integrity checksum, **not identity attestation**.
+
+Run the capture on each owned PC using its *actual* IPv4 addresses, leave original project files untouched, and transfer only copies of the new observation JSON into the Control Room Evidence Desk. The site compares the two reports entirely in the tab. **No socket is opened, no firewall is changed, and the reports do not authorize the experimental LAN handshake or resource use.**
 ## Development
 
 Requires Node.js 22 or later. From the repository root:
