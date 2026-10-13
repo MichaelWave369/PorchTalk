@@ -9,6 +9,7 @@ from __future__ import annotations
 from contextlib import ExitStack
 import copy
 import hashlib
+import os
 from pathlib import Path
 import socket
 import tempfile
