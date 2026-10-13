@@ -145,9 +145,12 @@ export async function readLocalJSON(file) {
  * A matching report pair is NEVER a networking, firewall or security approval.
  * Per-device observations can be fabricated or stale, so all caveats remain.
  */
-export function compareWindowsReports(left, right) {
-  const a = inspectWindowsReport(left)
-  const b = inspectWindowsReport(right)
+export function compareWindowsSummaries(a, b) {
+  if (!a || !b ||
+      a.status !== 'UNTRUSTED_WINDOWS_OBSERVATION_INSPECTED' ||
+      b.status !== 'UNTRUSTED_WINDOWS_OBSERVATION_INSPECTED') {
+    throw new EvidenceInputError('Both Windows reports must be locally inspected first')
+  }
   if (a.observed_local_ipv4 === b.observed_local_ipv4) {
     throw new EvidenceInputError('Both files claim the same local device IPv4 address')
   }
@@ -196,4 +199,9 @@ export function compareWindowsReports(left, right) {
     lan_connection_authorized: false,
     compute_authorized: false,
   }
+}
+
+
+export function compareWindowsReports(left, right) {
+  return compareWindowsSummaries(inspectWindowsReport(left), inspectWindowsReport(right))
 }
