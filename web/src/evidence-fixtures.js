@@ -46,3 +46,12 @@ export const syntheticRightReceipt = {
   ...shared, local_device_id:'sample-neighbor', local_fingerprint_sha256:'c'.repeat(64),
   peer_device_id:'sample-main-pc', peer_fingerprint_sha256:'b'.repeat(64),
 }
+
+
+export const syntheticNeighborWindowsObservation = {
+  ...syntheticWindowsObservation,
+  local_ipv4_entered:'192.168.10.20',
+  peer_ipv4_entered:'192.168.10.15',
+  // This is a FAKE record for UI demonstration, not independent hardware proof.
+  inspection_errors:['EXAMPLE_ONLY_NO_WINDOWS_PC_INSPECTED'],
+}
