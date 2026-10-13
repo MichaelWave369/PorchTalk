@@ -52,6 +52,7 @@ def main(argv: list[str] | None = None) -> int:
         sub.add_argument("--peer-id", required=True, help="Previously pinned device ID")
         sub.add_argument("--port", required=True, type=int, help="49152..65535, same on both PCs")
         sub.add_argument("--timeout", default=5, type=float, help="Single session timeout: 0.5..10 s")
+        sub.add_argument("--receipt-out", type=Path, help="Save public proof receipt only on success; create-only")
     args = parser.parse_args(argv)
     try:
         # Human approval always occurs BEFORE the vault is decrypted or any socket opened.
@@ -78,7 +79,16 @@ def main(argv: list[str] | None = None) -> int:
             local_ipv4=args.local_ip, peer_ipv4=args.peer_ip,
             port=args.port, timeout_seconds=args.timeout, operator_approved=True,
         )
-        print(json.dumps(receipt, indent=2, sort_keys=True))
+        result_json = json.dumps(receipt, indent=2, sort_keys=True)
+        print(result_json)
+        if args.receipt_out is not None:
+            try:
+                # Exclusive creation: never replace an existing personal artifact.
+                with args.receipt_out.open("x", encoding="utf-8") as file:
+                    file.write(result_json + "\n")
+            except OSError:
+                print("NOTICE: handshake succeeded but receipt file could not be saved", file=sys.stderr)
+                return 3
         return 0
     except (LanDenied, IdentityDenied, OSError, ValueError, sqlite3.DatabaseError) as exc:
         print("DENIED: no authorized peer session completed", file=sys.stderr)

@@ -25,8 +25,10 @@ class OfflinePeerIdentityTests(unittest.TestCase):
         self.bob_db = Path(self.tmp.name) / "bob.sqlite3"
         self.alice_trust = PinnedPeers(self.alice_db)
         self.bob_trust = PinnedPeers(self.bob_db)
-        self.addCleanup(self.alice_trust.close)
-        self.addCleanup(self.bob_trust.close)
+        # Resolve the CURRENT connection during cleanup: the replay test
+        # reopens both DB handles, and Windows refuses to unlink open files.
+        self.addCleanup(lambda: self.alice_trust.close())
+        self.addCleanup(lambda: self.bob_trust.close())
         self.alice_trust.enroll("bob-desktop", self.bob.public_key, operator_approved=True)
         self.bob_trust.enroll("alice-laptop", self.alice.public_key, operator_approved=True)
 

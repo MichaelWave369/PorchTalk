@@ -4,7 +4,7 @@
 
 PorchTalk is the proposed consent-first, budget-aware inference routing policy layer for the **Infinite Porch / Infinite Commons** ecosystem. It is independently implemented research code, intended to complement **PhiOS**, **PhiPie**, **Super Φ.Vessel / Crane Fly**, **BudgetGenius**, and **PhiStream**, not duplicate their runtimes.
 
-**Current status: v0.7.0 experimental protocol prototype.** It evaluates offline routing, tests signed consent claims, device fingerprints and loopback TLS 1.3, and can save experimental passphrase-encrypted device identities. **A separately opted-in, unaudited proof handshake can now connect two manually paired private-LAN devices; real two-PC hardware testing is still unverified. It does not discover devices, execute models, move weights, or permit actual resource sharing.**
+**Current status: v0.8.0 experimental protocol prototype.** It evaluates offline routing, tests signed consent claims, device fingerprints and loopback TLS 1.3, and can save experimental passphrase-encrypted device identities. **A separately opted-in, unaudited proof handshake can now connect two manually paired private-LAN devices; real two-PC hardware testing is still unverified. It does not discover devices, execute models, move weights, or permit actual resource sharing.**
 
 ## The first six rules
 
@@ -90,6 +90,20 @@ PorchTalk now includes a **manually authorized, one-shot private-LAN encrypted p
 Run `python -m porchtalk.lan_cli --help` to inspect commands without connecting. Read the [first two-PC knock operator runbook](docs/FIRST_TWO_PC_KNOCK.md) and its Windows firewall/identity handling requirements before testing physical hardware.
 
 **There is still NO remote model inference, weight transfer, job dispatch, command execution or GPU sharing.**
+
+## Gate B4e: Windows readiness and matching two-PC receipts
+
+PorchTalk now provides a **read-only Windows network readiness inspector** at [scripts/inspect_windows_readiness.ps1](scripts/inspect_windows_readiness.ps1). It observes local IPv4 presence, firewall profile state and port-listener status where Windows allows. It opens no sockets and changes no settings. The result always flags unresolved human checks and NEVER authorizes networking.
+
+The optional `--receipt-out` flag on the existing manually operated B4d `serve`/`knock` CLI creates a new JSON receipt **only after successful proof**, without overwriting old files. Two collected public-information receipts can then be compared **offline** using:
+
+```sh
+python -m porchtalk.evidence_cli main-pc.json storage-pc.json
+```
+
+The comparator checks mirrored device names, public-key fingerprints and transcript SHA-256, but calls the result **self-reported consistency, NOT independent attestation or real-hardware verification**. See the [Windows readiness and evidence runbook](docs/WINDOWS_EVIDENCE.md).
+
+GitHub CI now additionally runs on Windows. This found and fixed actual SQLite handle-lifecycle issues; no physical two-PC Windows test has been performed.
 
 ## Future compute-sharing milestone (NOT implemented)
 
