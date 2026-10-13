@@ -70,7 +70,7 @@ $now = [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfffZ')
 $unique = ([Guid]::NewGuid().ToString('N')).Substring(0, 12)
 $name = 'porchtalk-windows-' + $now + '-' + $unique + '.json'
 $path = Join-Path $folder.FullName $name
-$bytes = (New-Object System.Text.UTF8Encoding($false)).GetBytes($json + [Environment]::NewLine)
+$bytes = ([System.Text.UTF8Encoding]::new($false)).GetBytes($json + [Environment]::NewLine)
 if ($bytes.Length -gt 8192) {
     throw 'DENIED: observation exceeds browser import size limit'
 }
