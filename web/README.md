@@ -26,6 +26,31 @@ Click **Load synthetic example** to see deliberately fabricated, clearly labeled
 
 **Limits:** The browser can only check consistency of untrusted JSON. It does not cryptographically verify signed handshake records, prove that either physical PC was contacted, or authorize remote computation. It cannot detect duplicate JSON object keys; the canonical Python `python -m porchtalk.evidence_cli` tool performs stricter offline parsing and remains the reference checker. Don't select `.porchkey` vault files, private keys, passwords or confidential logs.
 
+## Two-Porch Windows comparison
+
+The Evidence Desk now accepts **two separately captured read-only Windows reports**. It cross-checks mirrored local/peer IPv4 addresses, equal high TCP ports and the conservative same-/24 RFC1918 input rule. It separately flags absent interface observations, unknown or disabled firewall profiles, already-listening ports, non-Private network profiles and inspection errors.
+
+The resulting status is **SELF_REPORTED_WINDOWS_PLANS_MATCH_WITH_MANUAL_BLOCKERS**, always with `lan_connection_authorized=false`, `real_hardware_verified=false` and `compute_authorized=false`. Even apparently clean files require independent fingerprint confirmation, exact firewall rules, protected Windows vaults and a fresh operator security review.
+
+### Capture two reports without opening a port
+
+Use `ipconfig` on each physical PC to learn its *actual* local IPv4. The values here are fictional examples and must be replaced. In a local PowerShell session inside the PorchTalk repository:
+
+PC A:
+
+```powershell
+.\scripts\inspect_windows_readiness.ps1 -LocalIPv4 192.168.10.15 -PeerIPv4 192.168.10.20 -Port 54321 | Set-Content -Path .\porch-a-readiness.json -Encoding UTF8
+```
+
+PC B, reversing the example addresses:
+
+```powershell
+.\scripts\inspect_windows_readiness.ps1 -LocalIPv4 192.168.10.20 -PeerIPv4 192.168.10.15 -Port 54321 | Set-Content -Path .\porch-b-readiness.json -Encoding UTF8
+```
+
+Copy **only** these read-only JSON files to the browser machine and select them in **Evidence Desk → Local observation inspector**, then click **Compare both Windows reports**. The browser can read UTF-8 with or without the Windows PowerShell BOM. It keeps file contents in this tab only. Do not transfer `.porchkey` vaults, private keys or passphrases.
+
+These files can reveal private IP addresses and network profile observations, so review before posting publicly. Comparing them **does not connect PCs, audit security, modify firewall settings, or authorize a LAN handshake**.
 ## Development
 
 Requires Node.js 22 or later. From the repository root:

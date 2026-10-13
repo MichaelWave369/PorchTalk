@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { AlertTriangle, CheckCircle2, FileJson, FolderOpen, Info, LockKeyhole, RotateCcw, ShieldAlert, ShieldCheck, XCircle } from 'lucide-react'
-import { EvidenceInputError, compareKnockReceipts, inspectWindowsReport, inspectKnockReceipt, readLocalJSON } from './evidence.js'
-import { syntheticWindowsObservation, syntheticLeftReceipt, syntheticRightReceipt } from './evidence-fixtures.js'
+import { EvidenceInputError, compareKnockReceipts, compareWindowsReports, compareWindowsSummaries, inspectWindowsReport, inspectKnockReceipt, readLocalJSON } from './evidence.js'
+import { syntheticWindowsObservation, syntheticNeighborWindowsObservation, syntheticLeftReceipt, syntheticRightReceipt } from './evidence-fixtures.js'
 
 function EvidenceFile({ title, subtitle, onLoad, status }) {
   const [filename, setFilename] = useState('')
@@ -28,28 +28,47 @@ function EvidenceFile({ title, subtitle, onLoad, status }) {
 
 export default function EvidenceDesk() {
   const [readiness, setReadiness] = useState(null)
+  const [neighborReadiness, setNeighborReadiness] = useState(null)
+  const [windowsMatch, setWindowsMatch] = useState(null)
+  const [fileVersion, setFileVersion] = useState(0)
   const [left, setLeft] = useState(null)
   const [right, setRight] = useState(null)
   const [feedback, setFeedback] = useState('')
   const [source, setSource] = useState('NONE')
   const [pairResult, setPairResult] = useState(null)
 
-  async function loadReport(file) {
+  async function loadReport(file, which) {
     setFeedback('')
-    setReadiness(null)
+    setWindowsMatch(null)
     if (source === 'SYNTHETIC_EXAMPLE_ONLY') {
+      setReadiness(null)
+      setNeighborReadiness(null)
       setLeft(null)
       setRight(null)
       setPairResult(null)
+      setFileVersion(n => n + 1)
     }
+    if (which === 'main') setReadiness(null)
+    else setNeighborReadiness(null)
     setSource('NONE')
     try {
       const report = inspectWindowsReport(await readLocalJSON(file))
-      setReadiness(report)
+      if (which === 'main') setReadiness(report)
+      else setNeighborReadiness(report)
       setSource('LOCAL_FILE_UNTRUSTED')
     } catch (error) {
       setFeedback('Windows report refused: ' + (error instanceof EvidenceInputError ? error.message : 'file could not be inspected'))
       throw error
+    }
+  }
+
+  function compareWindows() {
+    setFeedback('')
+    setWindowsMatch(null)
+    try {
+      setWindowsMatch(compareWindowsSummaries(readiness, neighborReadiness))
+    } catch (error) {
+      setFeedback('Windows reports disagree: ' + (error instanceof EvidenceInputError ? error.message : 'invalid local observation'))
     }
   }
 
@@ -58,8 +77,11 @@ export default function EvidenceDesk() {
     setPairResult(null)
     if (source === 'SYNTHETIC_EXAMPLE_ONLY') {
       setReadiness(null)
+      setNeighborReadiness(null)
+      setWindowsMatch(null)
       setLeft(null)
       setRight(null)
+      setFileVersion(n => n + 1)
     }
     if (which === 'left') setLeft(null)
     else setRight(null)
@@ -88,6 +110,9 @@ export default function EvidenceDesk() {
   function example() {
     setFeedback('')
     setReadiness(inspectWindowsReport(syntheticWindowsObservation))
+    setNeighborReadiness(inspectWindowsReport(syntheticNeighborWindowsObservation))
+    setWindowsMatch(compareWindowsReports(syntheticWindowsObservation, syntheticNeighborWindowsObservation))
+    setFileVersion(n => n + 1)
     setLeft(syntheticLeftReceipt)
     setRight(syntheticRightReceipt)
     setPairResult(compareKnockReceipts(syntheticLeftReceipt, syntheticRightReceipt))
@@ -97,9 +122,12 @@ export default function EvidenceDesk() {
   function clearAll() {
     setFeedback('')
     setReadiness(null)
+    setNeighborReadiness(null)
+    setWindowsMatch(null)
     setLeft(null)
     setRight(null)
     setPairResult(null)
+    setFileVersion(n => n + 1)
     setSource('NONE')
   }
 
@@ -116,25 +144,51 @@ export default function EvidenceDesk() {
 
     <section className="panel desk-panel">
       <div className="panel-head"><div><span className="kicker">READINESS / WINDOWS</span><h3>Local observation inspector</h3></div><span className="desk-status">NO AUTOMATIC APPROVAL</span></div>
-      <EvidenceFile title="Windows readiness report" subtitle="JSON output from the read-only PowerShell inspector" onLoad={loadReport} status={!!readiness} />
-      {readiness ? <>
-        <div className="desk-results">
-          <div><small>Entered local address</small><strong>{readiness.observed_local_ipv4}</strong></div>
-          <div><small>Proposed peer address</small><strong>{readiness.proposed_peer_ipv4}</strong></div>
-          <div><small>Port</small><strong>{readiness.proposed_port}</strong></div>
-          <div><small>Address plan</small><strong>{readiness.private_address_plan ? 'RFC1918 /24 format' : 'INVALID PLAN'}</strong></div>
-          <div><small>Windows interface claim</small><strong>{readiness.local_interface_claimed ? 'Observed by report' : 'Not observed'}</strong></div>
-          <div><small>Firewall enabled claim</small><strong>{readiness.firewall_enabled_claimed === null ? 'UNKNOWN' : readiness.firewall_enabled_claimed ? 'Enabled (not clearance)' : 'DISABLED'}</strong></div>
+      <div className="desk-twins">
+        <EvidenceFile key={'windows-a-' + fileVersion} title="Porch A Windows report"
+          subtitle="Read-only PowerShell JSON collected on the first PC"
+          onLoad={file => loadReport(file, 'main')} status={!!readiness} />
+        <EvidenceFile key={'windows-b-' + fileVersion} title="Porch B Windows report"
+          subtitle="Read-only PowerShell JSON collected on the other PC"
+          onLoad={file => loadReport(file, 'neighbor')} status={!!neighborReadiness} />
+      </div>
+      <button className="primary-btn desk-compare" type="button"
+        disabled={!readiness || !neighborReadiness}
+        onClick={compareWindows}><ShieldCheck size={17}/> Compare both Windows reports</button>
+      {(readiness || neighborReadiness) ? <div className="desk-results">
+        {[
+          {label: 'Porch A', value: readiness},
+          {label: 'Porch B', value: neighborReadiness},
+        ].map(item => <div key={item.label} className="desk-observation">
+          <small>{item.label}</small>
+          <strong>{item.value?.observed_local_ipv4 || 'NOT IMPORTED'}</strong>
+          <p>Expected peer: {item.value?.proposed_peer_ipv4 || 'Unknown'}</p>
+          <p>Port: {item.value?.proposed_port ?? 'Unknown'}</p>
+          <p>Interface: {item.value ? (item.value.local_interface_claimed ? 'Claimed present' : 'Not observed') : 'Unknown'}</p>
+          <p>Firewall: {item.value?.firewall_enabled_claimed === null || !item.value ? 'Unknown' : item.value.firewall_enabled_claimed ? 'Reported on' : 'Reported off'}</p>
+        </div>)}
+      </div> : <p className="desk-placeholder">Import two separate read-only Windows reports, one collected on each physical PC, or load the synthetic example. Nothing is uploaded.</p>}
+      {windowsMatch && <div className="desk-pass">
+        <CheckCircle2 size={21}/><div>
+          <strong>Supplied private-address plans cross-match</strong>
+          <p>{windowsMatch.porch_a_ipv4} ↔ {windowsMatch.porch_b_ipv4} · proposed port {windowsMatch.proposed_port}</p>
+          <small>{windowsMatch.observation_warnings.length} observations require attention · {windowsMatch.manual_checks_remain.length} mandatory manual reviews still open.</small>
+          {windowsMatch.observation_warnings.length > 0 && <ul className="desk-findings">
+            {windowsMatch.observation_warnings.map(w => <li key={w}>{w.replaceAll('_', ' ').toLowerCase()}</li>)}
+          </ul>}
+          <p className="desk-no-approval">NOT independently attested · NOT real-hardware verified · NO permission to open a port or share compute.</p>
         </div>
-        <div className="desk-advisory"><ShieldAlert size={18}/><div><strong>Still requires operator review</strong><p>{readiness.pending_manual_checks.length} manual checks unresolved. Report errors: {readiness.inspection_error_count}. An enabled firewall or a valid address is not proof of safe connectivity.</p></div></div>
-      </> : <p className="desk-placeholder">Nothing imported. Use the read-only Windows script in the repository to produce a report, or try the synthetic example.</p>}
+      </div>}
+      <div className="desk-advisory"><ShieldAlert size={18}/><div><strong>Address consistency is not network readiness</strong>
+        <p>Neither JSON file proves interface ownership, trusted fingerprint enrollment, protected Windows keys, correct firewall rules or router isolation. Actual network tests still require separate operator authorization and security review.</p>
+      </div></div>
     </section>
 
     <section className="panel desk-panel">
       <div className="panel-head"><div><span className="kicker">HANDSHAKE / EVIDENCE</span><h3>Compare two Porch receipts</h3></div><span className="desk-status">SELF-REPORTED ONLY</span></div>
       <div className="desk-twins">
-        <EvidenceFile title="Porch A receipt" subtitle="JSON from one participant's one-shot handshake" onLoad={file => loadReceipt(file, 'left')} status={!!left} />
-        <EvidenceFile title="Porch B receipt" subtitle="JSON from the other participant's handshake" onLoad={file => loadReceipt(file, 'right')} status={!!right} />
+        <EvidenceFile key={'receipt-a-' + fileVersion} title="Porch A receipt" subtitle="JSON from one participant's one-shot handshake" onLoad={file => loadReceipt(file, 'left')} status={!!left} />
+        <EvidenceFile key={'receipt-b-' + fileVersion} title="Porch B receipt" subtitle="JSON from the other participant's handshake" onLoad={file => loadReceipt(file, 'right')} status={!!right} />
       </div>
       <button className="primary-btn desk-compare" type="button" disabled={!left || !right} onClick={compare}><ShieldCheck size={17}/> Compare two local receipts</button>
       {pairResult && <div className="desk-pass">
