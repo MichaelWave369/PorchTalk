@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
+import json
 from pathlib import Path
+import tempfile
 import unittest
 from unittest.mock import patch
 
@@ -81,6 +83,40 @@ class LANCLISafetyTests(unittest.TestCase):
     def test_no_private_key_or_passphrase_arg(self):
         with self.assertRaises(SystemExit):
             main(self.args + ["--password", "do-not-record-secrets"])
+
+    def test_receipt_written_only_after_mocked_success_without_overwrite(self):
+        from porchtalk.identity import DeviceIdentity
+        from porchtalk.lan_knock import _receipt
+        myself = DeviceIdentity.generate_ephemeral("my-pc")
+        neighbor = DeviceIdentity.generate_ephemeral("neighbor")
+        signed_claim = _receipt(myself, neighbor.device_id, neighbor.fingerprint,
+                                b"offline-only fixture")
+        with tempfile.TemporaryDirectory() as folder:
+            output_path = Path(folder) / "first-knock.json"
+            params = self.args + ["--receipt-out", str(output_path)]
+            approval = "LISTEN 192.168.1.10:54321 PEER neighbor"
+            with patch("porchtalk.lan_cli.unlock_encrypted_vault", return_value=myself), \
+                 patch("porchtalk.lan_cli.preflight_two_pc_lab"), \
+                 patch("porchtalk.lan_cli.serve_one_knock", return_value=signed_claim):
+                code, _, _ = self.run_cli(answers=[approval], arguments=params)
+                self.assertEqual(code, 0)
+                self.assertEqual(json.loads(output_path.read_text(encoding="utf-8")), signed_claim)
+                before = output_path.read_bytes()
+                repeat, _, err = self.run_cli(answers=[approval], arguments=params)
+                self.assertEqual(repeat, 3)
+                self.assertIn("receipt file could not be saved", err)
+                self.assertEqual(before, output_path.read_bytes())
+
+    def test_receipt_never_written_when_approval_refused(self):
+        with tempfile.TemporaryDirectory() as folder:
+            output_path = Path(folder) / "denied.json"
+            code, _, err = self.run_cli(
+                answers=["DENY"],
+                arguments=self.args + ["--receipt-out", str(output_path)],
+            )
+            self.assertEqual(code, 2)
+            self.assertFalse(output_path.exists())
+            self.assertIn("DENIED", err)
 
     def test_missing_parameter_does_not_start_network(self):
         with self.assertRaises(SystemExit):
